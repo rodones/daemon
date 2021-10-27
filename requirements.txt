@@ -1,0 +1,5 @@
+asyncio
+jsons
+psutil
+python-dotenv
+websockets
