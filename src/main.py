@@ -10,8 +10,9 @@ import asyncio
 
 
 class WebSocketClient:
-    def __init__(self, uri) -> None:
+    def __init__(self, uri, key) -> None:
         self.uri = uri
+        self.key = key
         self.websocket = None
 
         logging.basicConfig(
@@ -24,7 +25,7 @@ class WebSocketClient:
 
     async def listen(self):
         self.logger.info(f"connecting to {self.uri}")
-        async with websockets.connect(self.uri) as websocket:
+        async with websockets.connect(f'{self.uri}?key={self.key}') as websocket:
             loop = asyncio.get_running_loop()
             loop.add_signal_handler(
                 signal.SIGTERM,
@@ -50,5 +51,5 @@ if __name__ == "__main__":
     dotenv_file = path.join(path.dirname(__file__), "..", ".env")
     load_dotenv(dotenv_file)
 
-    app = WebSocketClient(getenv("RODONESD_WS_URI"))
+    app = WebSocketClient(getenv("RODONESD_WS_URI"), getenv("RODONESD_KEY"))
     asyncio.run(app.listen())
