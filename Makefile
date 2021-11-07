@@ -1,5 +1,5 @@
 start:
-	python src/main.py
+	python src/rodonesd.py
 
 lint:
 	flake8 src/

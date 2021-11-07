@@ -2,11 +2,13 @@
 
 from os import path, getenv
 from core import handler
+from core.dto import CriticalResourceUsageEvent
 import handlers
 import signal
 import websockets
 import logging
 import asyncio
+import psutil
 
 
 class WebSocketClient:
@@ -23,6 +25,31 @@ class WebSocketClient:
 
         handlers.load()
 
+    async def _resource_watcher(self, websocket):
+        mem_is_send = False
+        disk_is_send = False
+        while True:
+            memory = psutil.virtual_memory()
+            disk = psutil.disk_usage("/")
+
+            if memory.percent > 35:
+                if not mem_is_send:
+                    self.logger.warning(f'Critical memory usage: {memory.percent}!')
+                    await websocket.send(CriticalResourceUsageEvent("memory", memory).to_json())
+                    mem_is_send = True
+            else:
+                mem_is_send = False
+
+            if disk.percent > 90:
+                if not disk_is_send:
+                    self.logger.warning(f'Critical disk usage: {disk.percent}!')
+                    await websocket.send(CriticalResourceUsageEvent("disk", disk).to_json())
+                    disk_is_send = True
+            else:
+                disk_is_send = False
+
+            await asyncio.sleep(5)
+
     async def listen(self):
         self.logger.info(f"connecting to {self.uri}")
         async with websockets.connect(f'{self.uri}?key={self.key}') as websocket:
@@ -32,6 +59,7 @@ class WebSocketClient:
                 loop.create_task,
                 websocket.close()
             )
+            asyncio.create_task(self._resource_watcher(websocket))
 
             async for message in websocket:
                 try:

@@ -46,3 +46,11 @@ class ResultEvent(Event):
 
     def __init__(self, cmd: str, result: Any):
         self.data = {"cmd": cmd, "result": result}
+
+
+@dataclass
+class CriticalResourceUsageEvent(Event):
+    event = "critical_resource_usage"
+
+    def __init__(self, name: str, stats: Any):
+        self.data = {"name": name, "stats": stats}

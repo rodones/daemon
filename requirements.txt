@@ -1,4 +1,5 @@
 asyncio
+docker
 jsons
 psutil
 python-dotenv
