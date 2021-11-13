@@ -18,21 +18,20 @@ def resolve(message: str):
         name = event.event
         data = event.data
 
-        match name:
-            case "exec":
-                command = data.get("cmd", "")
-                arguments = data.get("args", {})
+        if name == "exec":
+            command = data.get("cmd", "")
+            arguments = data.get("args", {})
 
-                handler = __RESOLVE_DICT__[name][command]
+            handler = __RESOLVE_DICT__[name][command]
 
-                parameters = list(inspect.signature(handler).parameters.keys())
-                arguments = [data.args[parameter] for parameter in parameters if parameter in arguments]
+            parameters = list(inspect.signature(handler).parameters.keys())
+            arguments = [data.args[parameter] for parameter in parameters if parameter in arguments]
 
-                result = ResultEvent(command, handler(*arguments))
+            result = ResultEvent(command, handler(*arguments))
 
-                return result.to_json()
-            case _:
-                return None
+            return result.to_json()
+        else:
+            return None
     except KeyError as e:
         return jsons.dumps({"message": f'The command {e} is not found.'})
     except Exception as e:
