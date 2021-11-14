@@ -30,9 +30,9 @@ class WebSocketClient:
         disk_is_send = False
         while True:
             memory = psutil.virtual_memory()
-            disk = psutil.disk_usage("/")
+            disk = psutil.disk_usage("/mnt/workspace")
 
-            if memory.percent > 35:
+            if memory.percent > 95:
                 if not mem_is_send:
                     self.logger.warning(f'Critical memory usage: {memory.percent}!')
                     await websocket.send(CriticalResourceUsageEvent("memory", memory).to_json())
@@ -40,7 +40,7 @@ class WebSocketClient:
             else:
                 mem_is_send = False
 
-            if disk.percent > 90:
+            if disk.percent > 95:
                 if not disk_is_send:
                     self.logger.warning(f'Critical disk usage: {disk.percent}!')
                     await websocket.send(CriticalResourceUsageEvent("disk", disk).to_json())
