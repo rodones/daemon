@@ -1,5 +1,5 @@
 asyncio
-docker
+docker>=5.0
 jsons
 psutil
 python-dotenv
