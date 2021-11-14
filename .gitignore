@@ -1,5 +1,6 @@
 .venv
 old-src/
 __pycache__
-.env*
+*.env*
+!*.env*.example
 src/test.py

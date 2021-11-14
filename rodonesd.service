@@ -1,0 +1,15 @@
+[Unit]
+Description=Rodones Daemon
+After=syslog.target network.target
+Documentation=https://github.com/rodones/daemon
+
+[Service]
+Type=simple
+User=rodones
+WorkingDirectory=/opt/rodones/daemon
+ExecStart=python3 src/rodonesd.py
+Restart=on-failure
+RestartSec=60s
+
+[Install]
+WantedBy=multi-user.target
