@@ -1,7 +1,6 @@
 # rodonesd
 
-rodones daemon
-
+rodones daemon is a daemon program to control host systems. It allows you list running container, start pipeline, show logs and log summaries, system cpu/ram usage etc.
 
 ## Installation 
 
